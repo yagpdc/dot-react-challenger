@@ -10,6 +10,7 @@ interface Dots {
 
 function App() {
   const [dot, setDot] = useState<Dots[]>([]);
+  const [cache, setCache] = useState<Dots[]>([])
 
   const handleClick = (e: React.MouseEvent) => {  
     const newDots = {
@@ -22,18 +23,26 @@ function App() {
   };
 
   const undoDots = () => {
-
+    if (dot.length > 0) {
+      const newDots = [...dot]
+      const lastDot = newDots.pop() as Dots
+      setCache([...cache, lastDot]),setDot(newDots)
+    } 
   }
 
   const redoDots = () => {
-    
+    if (cache.length > 0) {
+      const newCache = [...cache]
+      const lastCache = newCache.pop() as Dots
+      setCache(newCache),setDot([...dot, lastCache])
+    }
   }
 
   return (
     <div className="app">
       <div className="btn-container">
-        <button>Undo</button>
-        <button>Redo</button>
+        <button onClick={undoDots}>Undo</button>
+        <button onClick={redoDots}>Redo</button>
       </div>
       <div className="dot-container" onClick={handleClick}>
         {dot.map(({ x, y}: Dots, id: number) => (
@@ -45,7 +54,6 @@ function App() {
         ))}
       </div>
     </div>
-  );
+  )
 }
-
 export default App;
